@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lotería interactiva</title>
+  <style>
+    :root {
+      --bg: #f5efe6;
+      --card-radius: 18px;
+      --shadow: 0 10px 30px rgba(0,0,0,.18);
+      --overlay: rgba(0,0,0,.68);
+      --text: #1f1f1f;
+      --muted: #666;
+      --max-card-w: 340px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .header {
+      max-width: 1200px;
+      margin: 0 auto 20px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .title-wrap h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.05;
+    }
+
+    .title-wrap p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 700px;
+      line-height: 1.45;
+    }
+
+    .grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+    }
+
+    .thumb {
+      border: 0;
+      background: transparent;
+      padding: 0;
+      cursor: pointer;
+      transition: transform .18s ease;
+    }
+
+    .thumb:hover,
+    .thumb:focus-visible {
+      transform: translateY(-4px) scale(1.01);
+      outline: none;
+    }
+
+    .thumb img {
+      width: 100%;
+      display: block;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      z-index: 999;
+    }
+
+    .overlay.open {
+      display: flex;
+      animation: fadeIn .25s ease;
+    }
+
+    .viewer {
+      position: relative;
+      width: min(92vw, 720px);
+      height: min(84vh, 980px);
+      perspective: 1800px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flip-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .85s cubic-bezier(.2,.8,.2,1), scale .28s ease;
+      transform: rotateY(0deg) scale(0.88);
+      animation: zoomIn .3s ease forwards;
+    }
+
+    .flip-card.flipped {
+      transform: rotateY(180deg) scale(1);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 24px 70px rgba(0,0,0,.32);
+      background: #fff;
+    }
+
+    .face.front img,
+    .face.back img.bg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      background: transparent;
+    }
+
+    .face.back {
+      transform: rotateY(180deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+
+    .back-text-layer {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 9% 11%;
+      text-align: center;
+    }
+
+    .back-text {
+      font-size: clamp(18px, 2.2vw, 28px);
+      line-height: 1.35;
+      font-weight: 700;
+      color: #2b1e10;
+      text-wrap: balance;
+      white-space: pre-line;
+    }
+
+    .controls {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      gap: 10px;
+      z-index: 2;
+    }
+
+    .icon-btn {
+      border: 0;
+      background: rgba(255,255,255,.92);
+      border-radius: 999px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+      font-size: 18px;
+    }
+
+    .hint {
+      position: absolute;
+      left: 50%;
+      bottom: -44px;
+      transform: translateX(-50%);
+      color: #fff;
+      font-size: 14px;
+      opacity: .92;
+      text-align: center;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes zoomIn {
+      from { transform: rotateY(0deg) scale(0.7); opacity: 0; }
+      to { transform: rotateY(0deg) scale(0.88); opacity: 1; }
+    }
+
+    @media (max-width: 680px) {
+      .page { padding: 16px; }
+      .viewer {
+        width: min(96vw, 520px);
+        height: min(78vh, 760px);
+      }
+      .hint {
+        bottom: -56px;
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="header">
+      <div class="title-wrap">
+        <h1>Lotería interactiva</h1>
+        <p>
+          Haz clic en cualquier tarjeta para verla grande. Dentro de la vista grande,
+          vuelve a hacer clic en la tarjeta para girarla y leer el texto detrás.
+        </p>
+      </div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <div id="overlay" class="overlay" aria-hidden="true">
+    <div class="viewer">
+      <div class="controls">
+        <button id="flipBtn" class="icon-btn" aria-label="Girar tarjeta">↺</button>
+        <button id="closeBtn" class="icon-btn" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div id="flipCard" class="flip-card" role="dialog" aria-modal="true" aria-label="Tarjeta ampliada">
+        <div class="face front">
+          <img id="frontImg" alt="Frente de la tarjeta" />
+        </div>
+        <div class="face back">
+          <img id="backImg" class="bg" alt="Reverso de la tarjeta" />
+          <div class="back-text-layer">
+            <div id="backText" class="back-text"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hint">Haz clic en la tarjeta para girarla y ver el mensaje.</div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      INSTRUCCIONES IMPORTANTES:
+      1) Exporta desde Canva cada frente de tarjeta en PNG o JPG.
+      2) Si quieres mantener EXACTAMENTE el estilo del reverso, también exporta un fondo de reverso.
+      3) Guarda tus imágenes en una carpeta llamada /assets.
+      4) Reemplaza las rutas y textos en el arreglo CARDS de abajo.
+    */
+
+    const CARDS = [
+      {
+        id: 1,
+        title: 'La Nieve',
+        frontImage: '../assets/RAM.png',
+        backImage: '../assets/Erik_Kai_Hansen_physician.png',
+        backText: 'Esto es una prueba.'
+      },
+      {
+        id: 2,
+        title: 'El Mezcal',
+        frontImage: 'assets/carta-02-frente.png',
+        backImage: 'assets/reverso-base.png',
+        backText: 'Aquí puedes poner\notro mensaje distinto\npara la segunda carta.'
+      },
+      {
+        id: 3,
+        title: 'La Luna',
+        frontImage: 'assets/carta-03-frente.png',
+        backImage: 'assets/reverso-base.png',
+        backText: 'Texto personalizado\npara cada selección\ndel juego.'
+      },
+      {
+        id: 4,
+        title: 'La Calenda',
+        frontImage: 'assets/carta-04-frente.png',
+        backImage: 'assets/reverso-base.png',
+        backText: 'Puedes usar saltos\nde línea para que\nse vea mejor.'
+      }
+    ];
+
+    const grid = document.getElementById('grid');
+    const overlay = document.getElementById('overlay');
+    const flipCard = document.getElementById('flipCard');
+    const frontImg = document.getElementById('frontImg');
+    const backImg = document.getElementById('backImg');
+    const backText = document.getElementById('backText');
+    const closeBtn = document.getElementById('closeBtn');
+    const flipBtn = document.getElementById('flipBtn');
+
+    let currentCard = null;
+
+    function renderGrid() {
+      grid.innerHTML = '';
+
+      CARDS.forEach(card => {
+        const btn = document.createElement('button');
+        btn.className = 'thumb';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', `Abrir tarjeta ${card.title}`);
+        btn.innerHTML = `<img src="${card.frontImage}" alt="${card.title}">`;
+        btn.addEventListener('click', () => openCard(card));
+        grid.appendChild(btn);
+      });
+    }
+
+    function openCard(card) {
+      currentCard = card;
+      flipCard.classList.remove('flipped');
+      frontImg.src = card.frontImage;
+      frontImg.alt = `Frente de ${card.title}`;
+      backImg.src = card.backImage;
+      backImg.alt = `Reverso de ${card.title}`;
+      backText.textContent = card.backText;
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeCard() {
+      overlay.classList.remove('open');
+      overlay.setAttribute('aria-hidden', 'true');
+      flipCard.classList.remove('flipped');
+      document.body.style.overflow = '';
+      currentCard = null;
+    }
+
+    function toggleFlip() {
+      if (!currentCard) return;
+      flipCard.classList.toggle('flipped');
+    }
+
+    closeBtn.addEventListener('click', closeCard);
+    flipBtn.addEventListener('click', toggleFlip);
+    flipCard.addEventListener('click', toggleFlip);
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeCard();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!overlay.classList.contains('open')) return;
+      if (e.key === 'Escape') closeCard();
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleFlip();
+      }
+    });
+
+    renderGrid();
+  </script>
+</body>
+</html>
