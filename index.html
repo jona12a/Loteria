@@ -145,6 +145,7 @@
       align-items: center;
       justify-content: center;
       background: #fff;
+      border: 4px solid #7a2e1f;
     }
 
     .back-text-layer {
@@ -302,7 +303,6 @@
           <img id="frontImg" alt="Frente de la tarjeta" />
         </div>
         <div class="face back">
-          <img id="backImg" class="bg" alt="Reverso de la tarjeta" />
       <div class="back-text-layer">
         <div class="back-content">
           <div id="backText" class="back-text"></div>
@@ -332,7 +332,6 @@
         id: 1,
         title: 'La Nieve',
         frontImage: 'assets/RAM.png',
-        backImage: 'assets/Erik_Kai_Hansen_physician.png',
         backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestro regalo, puedes pedir los datos aquí.',
         actionLabel: 'Quiero aportar',
         actionUrl: 'https://wa.me/525555555555?text=Hola,%20quiero%20pedir%20los%20datos%20para%20hacer%20mi%20regalo.'
@@ -392,9 +391,6 @@
 
       frontImg.src = card.frontImage;
       frontImg.alt = `Frente de ${card.title}`;
-
-      backImg.src = card.backImage;
-      backImg.alt = `Reverso de ${card.title}`;
 
       backText.textContent = card.backText || '';
 
