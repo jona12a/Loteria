@@ -167,6 +167,49 @@
       white-space: pre-line;
     }
 
+    .back-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      width: 100%;
+    }
+
+    .loteria-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      min-width: 220px;
+      text-decoration: none;
+      border-radius: 14px;
+      border: 3px solid #7a2e1f;
+      background: linear-gradient(180deg, #f7e7c6 0%, #ecd3a3 100%);
+      color: #7a2e1f;
+      font-weight: 700;
+      font-size: clamp(16px, 2vw, 22px);
+      letter-spacing: 0.4px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+      transition: transform .18s ease, box-shadow .18s ease;
+      text-align: center;
+      position: relative;
+    }
+
+    .loteria-btn:hover,
+    .loteria-btn:focus-visible {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 12px 24px rgba(0,0,0,.22);
+      outline: none;
+    }
+
+    .loteria-btn::before,
+    .loteria-btn::after {
+      content: "✦";
+      font-size: 16px;
+      margin: 0 10px;
+      color: #b14b32;
+    }
+
     .controls {
       position: absolute;
       top: 14px;
@@ -261,13 +304,18 @@
         </div>
         <div class="face back">
           <img id="backImg" class="bg" alt="Reverso de la tarjeta" />
-          <div class="back-text-layer">
-            <div id="backText" class="back-text"></div>
-          </div>
+      <div class="back-text-layer">
+        <div class="back-content">
+          <div id="backText" class="back-text"></div>
+          <a id="cardActionBtn" class="loteria-btn" href="#" target="_blank" rel="noopener noreferrer" style="display:none;">
+          Quiero aportar
+          </a>
+        </div>
+      </div>
         </div>
       </div>
 
-      <div class="hint">Haz clic en la tarjeta para girarla y ver el mensaje.</div>
+      <div class="hint">Toca una tarjeta para ver el mensaje</div>
     </div>
   </div>
 
@@ -286,7 +334,9 @@
         title: 'La Nieve',
         frontImage: 'assets/RAM.png',
         backImage: 'assets/Erik_Kai_Hansen_physician.png',
-        backText: 'Esto es una prueba.'
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestro regalo, puedes pedir los datos aquí.',
+        actionLabel: 'Quiero aportar',
+        actionUrl: 'https://wa.me/525555555555?text=Hola,%20quiero%20pedir%20los%20datos%20para%20hacer%20mi%20regalo.'
       },
       {
         id: 2,
@@ -319,6 +369,7 @@
     const backText = document.getElementById('backText');
     const closeBtn = document.getElementById('closeBtn');
     const flipBtn = document.getElementById('flipBtn');
+    const cardActionBtn = document.getElementById('cardActionBtn');
 
     let currentCard = null;
 
@@ -336,29 +387,37 @@
       });
     }
 
-function openCard(card) {
-  currentCard = card;
-  flipCard.classList.remove('flipped');
+    function openCard(card) {
+      currentCard = card;
+      flipCard.classList.remove('flipped');
 
-  frontImg.src = card.frontImage;
-  frontImg.alt = `Frente de ${card.title}`;
+      frontImg.src = card.frontImage;
+      frontImg.alt = `Frente de ${card.title}`;
 
-  backImg.src = card.backImage;
-  backImg.alt = `Reverso de ${card.title}`;
+      backImg.src = card.backImage;
+      backImg.alt = `Reverso de ${card.title}`;
 
-  backText.textContent = card.backText;
+      backText.textContent = card.backText || '';
 
-  overlay.classList.add('open');
-  overlay.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+      if (card.actionUrl) {
+        cardActionBtn.href = card.actionUrl;
+        cardActionBtn.textContent = card.actionLabel || 'Abrir enlace';
+        cardActionBtn.style.display = 'inline-flex';
+      } else {
+        cardActionBtn.style.display = 'none';
+        cardActionBtn.removeAttribute('href');
+      }
 
-  // Shift focus to the close button for better accessibility and keyboard control
-  closeBtn.focus();
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
 
-  setTimeout(() => {
-    flipCard.classList.add('flipped');
-  }, 350);
-}
+      closeBtn.focus();
+
+      setTimeout(() => {
+        flipCard.classList.add('flipped');
+      }, 350);
+    }
 
     function closeCard() {
       overlay.classList.remove('open');
@@ -366,6 +425,8 @@ function openCard(card) {
       flipCard.classList.remove('flipped');
       document.body.style.overflow = '';
       currentCard = null;
+      cardActionBtn.style.display = 'none';
+      cardActionBtn.removeAttribute('href');
     }
 
     function toggleFlip() {
@@ -375,6 +436,9 @@ function openCard(card) {
 
     closeBtn.addEventListener('click', closeCard);
     flipBtn.addEventListener('click', toggleFlip);
+    cardActionBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
     flipCard.addEventListener('click', toggleFlip);
 
     overlay.addEventListener('click', (e) => {
