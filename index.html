@@ -35,6 +35,13 @@
       padding: 24px;
     }
 
+    .gate-luck {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #b14b32;
+      letter-spacing: 0.12em;
+    }
+
     .gate-card {
       width: 100%;
       max-width: 460px;
@@ -297,11 +304,91 @@
       animation: shake 0.25s ease;
     }
 
+    .luck-animate {
+      animation: luckFade 0.4s ease;
+    }
+
+    @keyframes luckFade {
+      0% {
+        opacity: 0.3;
+        transform: translateY(4px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }    
+
     .input-error {
       border-color: #d94f2b !important;
       box-shadow: 0 0 0 3px rgba(217, 79, 43, 0.25);
       transition: box-shadow 0.2s ease, border 0.2s ease;
     }
+
+    .gate-card-pretty {
+      max-width: 520px;
+      padding: 0;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(247,231,198,0.92) 0%, rgba(255,250,242,0.96) 100%);
+      border: 4px solid #7a2e1f;
+      box-shadow: 0 24px 50px rgba(0,0,0,.14);
+    }
+
+    .gate-inner {
+      padding: 36px 30px 30px;
+      text-align: center;
+    }
+
+    .gate-kicker {
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      color: #b14b32;
+      margin-bottom: 14px;
+    }
+
+    .gate-title {
+      margin: 0 0 12px;
+      font-size: clamp(40px, 7vw, 64px);
+      line-height: 1;
+      color: #7a2e1f;
+    }
+
+    .gate-subtitle {
+      margin: 0 auto 24px;
+      max-width: 360px;
+      color: #5f5145;
+      line-height: 1.5;
+      font-size: 16px;
+    }
+
+    .gate-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .gate-input {
+      width: 100%;
+    }
+
+    .gate-submit {
+      width: 100%;
+    }
+
+    .gate-message {
+      min-height: 20px;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .gate-footer-detail {
+      margin-top: 18px;
+      color: #b14b32;
+      font-size: 16px;
+      letter-spacing: 0.18em;
+    }    
 
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -338,27 +425,67 @@
         width: 90%;
       }
     }
+
+    .fade-out {
+      animation: fadeOutGate 0.45s ease forwards;
+    }
+
+    @keyframes fadeOutGate {
+      from {
+        opacity: 1;
+        transform: scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: scale(0.985);
+      }
+    }
+
+    .fade-in {
+      animation: fadeInPage 0.45s ease forwards;
+    }
+
+    @keyframes fadeInPage {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }    
   </style>
 </head>
 <body>
   <section id="gateScreen" class="gate">
-    <div class="gate-card">
-      <h1>La Boderia</h1>
-      <p>Ingresa la clave para acceder y ver las tarjetas.</p>
+    <div class="gate-card gate-card-pretty">
+      <div class="gate-inner">
+        <div class="gate-kicker">✦ boda + lotería + amor ✦</div>
+        <h1 class="gate-title">La Boderia</h1>
+        <p class="gate-subtitle">
+          Una lluvia de cariño, juego y celebración.<br>
+          Ingresa la clave para abrir la Boderia.
+        </p>
 
-      <input
-        id="gateInput"
-        class="access-input"
-        type="password"
-        placeholder="Ingresa la clave"
-        autocomplete="off"
-      />
+        <div class="gate-form">
+          <input
+            id="gateInput"
+            class="access-input gate-input"
+            type="password"
+            placeholder="Ingresa la clave"
+            autocomplete="off"
+          />
 
-      <div style="height: 12px;"></div>
+          <button id="gateSubmit" class="access-btn gate-submit">Entrar</button>
 
-      <button id="gateSubmit" class="access-btn">Entrar</button>
+          <div id="gateLuck" class="gate-luck">¡Suerte!</div>
+          
+          <div id="gateMessage" class="gate-message"></div>
+        </div>
 
-      <div id="gateMessage" style="font-size:14px; margin-top:12px; min-height:18px;"></div>
+        <div class="gate-footer-detail">✦ ✦ ✦</div>
+      </div>
     </div>
   </section>
 
@@ -455,6 +582,8 @@
     const copyBtn = document.getElementById('copyBtn');
     const cuentaTexto = document.getElementById('cuentaTexto');
 
+    const gateLuck = document.getElementById('gateLuck');
+
     let currentCard = null;
     let gateErrorTimeout = null;
 
@@ -473,12 +602,28 @@
     }
 
     function unlockSite() {
-      gateScreen.classList.add('hidden');
-      mainPage.classList.remove('hidden');
+      gateScreen.classList.add('fade-out');
+
+      setTimeout(() => {
+        gateScreen.classList.add('hidden');
+        gateScreen.classList.remove('fade-out');
+
+        mainPage.classList.remove('hidden');
+
+        // fade in del homepage
+        mainPage.classList.remove('fade-in');
+        void mainPage.offsetWidth;
+        mainPage.classList.add('fade-in');
+
+      }, 450);
     }
 
     function handleGateAccess() {
       const value = gateInput.value.trim();
+      // animación de "¡Suerte!"
+      gateLuck.classList.remove('luck-animate');
+      void gateLuck.offsetWidth;
+      gateLuck.classList.add('luck-animate');      
 
       gateMessage.textContent = '';
       gateMessage.style.color = '';
