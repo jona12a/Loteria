@@ -274,6 +274,22 @@
         width: 90%;
       }
     }
+
+    .reveal {
+      display: block !important;
+      animation: revealUp 0.32s ease;
+    }
+
+    @keyframes revealUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }    
   </style>
 </head>
 <body>
@@ -345,28 +361,28 @@
         id: 1,
         title: 'La Nieve',
         frontImage: 'assets/RAM.png',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestro regalo, puedes pedir los datos aquí.',
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, ingresa la clave para ver los datos.',
         actionLabel: 'Quiero aportar',
       },
       {
         id: 2,
         title: 'El Mezcal',
         frontImage: 'assets/Erik_Kai_Hansen_physician.PNG',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestro regalo, puedes pedir los datos aquí.',
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, ingresa la clave para ver los datos.',
         actionLabel: 'Quiero aportar',    
       },
       {
         id: 3,
         title: 'La Luna',
         frontImage: 'assets/Multi-Access PDN Connectivity.PNG',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestro regalo, puedes pedir los datos aquí.',
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, ingresa la clave para ver los datos.',
         actionLabel: 'Quiero aportar',      
       },
       {
         id: 4,
         title: 'La Calenda',
         frontImage: 'assets/Genitiv en Aleman.PNG',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestro regalo, puedes pedir los datos aquí.',
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, ingresa la clave para ver los datos.',
         actionLabel: 'Quiero aportar',
       }
     ];
@@ -454,11 +470,11 @@
     cardActionBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       accessBox.style.display = 'flex';
+      cardActionBtn.style.display = 'none';
       accessInput.focus();
     });
     accessBox.addEventListener('click', (e) => e.stopPropagation());
     bankBox.addEventListener('click', (e) => e.stopPropagation());
-    flipCard.addEventListener('click', toggleFlip);
 
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeCard();
@@ -471,10 +487,6 @@
 
       if (e.key === 'Escape') closeCard();
 
-      if ((e.key === 'Enter' || e.key === ' ') && tag !== 'INPUT' && tag !== 'BUTTON') {
-        e.preventDefault();
-        toggleFlip();
-      }
     });
 
     accessInput.addEventListener('keydown', (e) => {
@@ -494,8 +506,9 @@
 
       if (value === ACCESS_CODE) {
         bankBox.style.display = 'block';
-        accessMessage.textContent = "Acceso concedido";
-        accessMessage.style.color = "green";
+        bankBox.classList.remove('reveal');
+        void bankBox.offsetWidth;
+        bankBox.classList.add('reveal');        
       } else {
         accessMessage.textContent = "Clave incorrecta";
         accessMessage.style.color = "red";
