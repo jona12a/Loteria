@@ -289,6 +289,18 @@
         opacity: 1;
         transform: translateY(0);
       }
+    }
+    
+    .shake {
+      animation: shake 0.25s ease;
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      50% { transform: translateX(4px); }
+      75% { transform: translateX(-3px); }
+      100% { transform: translateX(0); }
     }    
   </style>
 </head>
@@ -517,18 +529,29 @@
 
       bankBox.style.display = 'none';
       accessMessage.textContent = '';
+      accessMessage.style.color = '';
 
-    if (value === ACCESS_CODE) {
-      accessMessage.textContent = '';
-      bankBox.style.display = 'block';
-      bankBox.classList.remove('reveal');
-      void bankBox.offsetWidth;
-      bankBox.classList.add('reveal');
-    } else {
-      bankBox.style.display = 'none';
-      accessMessage.textContent = "Clave incorrecta";
-      accessMessage.style.color = "red";
-    }
+      if (value === ACCESS_CODE) {
+        bankBox.style.display = 'block';
+        bankBox.classList.remove('reveal');
+        void bankBox.offsetWidth;
+        bankBox.classList.add('reveal');
+      } else {
+        accessMessage.textContent = "Clave incorrecta";
+        accessMessage.style.color = "red";
+
+        accessInput.classList.remove('shake');
+        void accessInput.offsetWidth;
+        accessInput.classList.add('shake');
+
+        accessInput.value = '';
+        accessInput.focus();
+
+        setTimeout(() => {
+          accessMessage.textContent = '';
+        }, 2000);
+      }
+    });
 
     copyBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
