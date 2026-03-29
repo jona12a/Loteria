@@ -68,38 +68,129 @@
     .page {
       min-height: 100vh;
       padding: 24px;
-      opacity: 1;
+      display: flex;
+      flex-direction: column;
     }
 
     .header {
-      max-width: 1200px;
-      margin: 0 auto 20px;
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-
-    .title-wrap h1 {
-      margin: 0 0 8px;
-      font-size: clamp(28px, 4vw, 42px);
-      line-height: 1.05;
-    }
-
-    .title-wrap p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 700px;
-      line-height: 1.45;
+      width: 100%;
     }
 
     .grid {
-      max-width: 1200px;
+      flex: 1;
+      align-content: center;
+    }
+
+    .header {
+      width: min(92vw, 900px);
+      margin: 0 auto 20px;
+      text-align: center;
+    }
+
+    .header-fade {
+      animation: headerFade 0.5s ease forwards;
+    }
+
+    @keyframes headerFade {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .grid-fade {
+      animation: gridFade 0.5s ease forwards;
+      animation-delay: 0.15s;
+      opacity: 0;
+    }
+
+    @keyframes gridFade {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-stagger {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+
+    .card-stagger.in {
+      animation: cardFadeUp 0.45s ease forwards;
+    }
+
+    @keyframes cardFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }    
+
+    .title-wrap h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.05;
+      text-align: center;
+    }
+
+    .title-wrap p {
+      margin: 0 auto;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .grid-fade {
+      animation: gridFade 0.5s ease forwards;
+      animation-delay: 0.15s;
+    }
+
+    @keyframes gridFade {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }    
+
+    .title-wrap h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.05;
+      text-align: center;
+    }
+
+    .title-wrap p {
+      margin: 0 auto;
+      color: var(--muted);
+      max-width: 520px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .grid {
+      width: min(92vw, 900px);
       margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 1.4vw, 18px);
     }
 
     .thumb {
@@ -108,6 +199,7 @@
       padding: 0;
       cursor: pointer;
       transition: transform .18s ease;
+      aspect-ratio: 3 / 5;
     }
 
     .thumb:hover,
@@ -118,7 +210,9 @@
 
     .thumb img {
       width: 100%;
+      height: 100%;
       display: block;
+      object-fit: contain;
       border-radius: var(--card-radius);
       box-shadow: var(--shadow);
     }
@@ -266,6 +360,24 @@
       box-shadow: 0 6px 14px rgba(0,0,0,0.15);
     }
 
+    .account-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .account-title {
+      margin: 0 0 6px;
+      font-size: 18px;
+      color: #7a2e1f;
+    }
+
+    .account-divider {
+      height: 1px;
+      background: rgba(122, 46, 31, 0.18);
+      margin: 14px 0;
+    }    
+
     .controls {
       position: absolute;
       top: 14px;
@@ -349,7 +461,7 @@
     }
 
     .gate-title {
-      margin: 0 0 12px;
+      margin: 0 0 20px;
       font-size: clamp(40px, 7vw, 64px);
       line-height: 1;
       color: #7a2e1f;
@@ -417,11 +529,36 @@
     }
 
     @media (max-width: 680px) {
-      .page { padding: 16px; }
+      .page { 
+        padding: 12px; 
+      }
+
+      .header {
+        margin-bottom: 14px;
+      }
+
+      .title-wrap h1 {
+        font-size: 28px;
+      }
+
+      .title-wrap p {
+        font-size: 14px;
+      }
+
+      .grid {
+        width: min(96vw, 520px);
+        gap: 8px;
+      }
+
+      .thumb img {
+        border-radius: 10px;
+      }
+
       .viewer {
         width: min(96vw, 520px);
         height: min(78vh, 760px);
       }
+
       .hint {
         bottom: -56px;
         width: 90%;
@@ -521,10 +658,22 @@
               <div id="backText" class="back-text"></div>
 
               <div id="bankBox" class="bank-box">
-                <p><strong>Banco:</strong> BBVA</p>
-                <p><strong>Nombre:</strong> TU NOMBRE</p>
-                <p><strong>Cuenta:</strong> <span id="cuentaTexto">1234567890</span></p>
-                <button id="copyBtn" class="copy-btn">Copiar cuenta</button>
+                <div class="account-section">
+                  <h3 class="account-title">México</h3>
+                  <p><strong>Banco:</strong> BBVA</p>
+                  <p><strong>Nombre:</strong> TU NOMBRE</p>
+                  <p><strong>Cuenta digital:</strong> <span id="mxCuentaTexto">1234567890</span></p>
+                  <button id="copyMxBtn" class="copy-btn">Copiar cuenta MX</button>
+                </div>
+
+                <div class="account-divider"></div>
+
+                <div class="account-section">
+                  <h3 class="account-title">United States</h3>
+                  <p><strong>Venmo:</strong> <span id="usCuentaTexto">@yourvenmo</span></p>
+                  <p><strong>Name:</strong> YOUR NAME</p>
+                  <button id="copyUsBtn" class="copy-btn">Copy Venmo</button>
+                </div>
               </div>
             </div>
           </div>
@@ -543,25 +692,25 @@
         id: 1,
         title: 'La Nieve',
         frontImage: 'assets/RAM.png',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.'
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.\n\nThank you for joining us.\nIf you would like to contribute to our Boderia, you will find the details here.'
       },
       {
         id: 2,
         title: 'El Mezcal',
         frontImage: 'assets/Erik_Kai_Hansen_physician.PNG',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.'
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.\n\nThank you for joining us.\nIf you would like to contribute to our Boderia, you will find the details here.'
       },
       {
         id: 3,
         title: 'La Luna',
         frontImage: 'assets/Multi-Access PDN Connectivity.PNG',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.'
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.\n\nThank you for joining us.\nIf you would like to contribute to our Boderia, you will find the details here.'
       },
       {
         id: 4,
         title: 'La Calenda',
         frontImage: 'assets/Genitiv en Aleman.PNG',
-        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.'
+        backText: 'Gracias por acompañarnos.\nSi quieres aportar a nuestra boderia, aquí encontrarás los datos.\n\nThank you for joining us.\nIf you would like to contribute to our Boderia, you will find the details here.'
       }
     ];
 
@@ -579,8 +728,10 @@
     const closeBtn = document.getElementById('closeBtn');
     const flipBtn = document.getElementById('flipBtn');
     const bankBox = document.getElementById('bankBox');
-    const copyBtn = document.getElementById('copyBtn');
-    const cuentaTexto = document.getElementById('cuentaTexto');
+    const copyMxBtn = document.getElementById('copyMxBtn');
+    const copyUsBtn = document.getElementById('copyUsBtn');
+    const mxCuentaTexto = document.getElementById('mxCuentaTexto');
+    const usCuentaTexto = document.getElementById('usCuentaTexto');
 
     const gateLuck = document.getElementById('gateLuck');
 
@@ -590,11 +741,12 @@
     function renderGrid() {
       grid.innerHTML = '';
 
-      CARDS.forEach(card => {
+      CARDS.forEach((card, index) => {
         const btn = document.createElement('button');
-        btn.className = 'thumb';
+        btn.className = 'thumb card-stagger';
         btn.type = 'button';
         btn.setAttribute('aria-label', `Abrir tarjeta ${card.title}`);
+        btn.dataset.index = index;
         btn.innerHTML = `<img src="${card.frontImage}" alt="${card.title}">`;
         btn.addEventListener('click', () => openCard(card));
         grid.appendChild(btn);
@@ -610,11 +762,28 @@
 
         mainPage.classList.remove('hidden');
 
-        // fade in del homepage
-        mainPage.classList.remove('fade-in');
-        void mainPage.offsetWidth;
-        mainPage.classList.add('fade-in');
+        const header = document.querySelector('.header');
+        const grid = document.querySelector('.grid');
+        const cards = document.querySelectorAll('.thumb');
 
+        header.classList.remove('header-fade');
+        grid.classList.remove('grid-fade');
+
+        cards.forEach((card, index) => {
+          card.classList.remove('in');
+          card.style.animationDelay = `${index * 90}ms`;
+          void card.offsetWidth;
+        });
+
+        void header.offsetWidth;
+        void grid.offsetWidth;
+
+        header.classList.add('header-fade');
+        grid.classList.add('grid-fade');
+
+        cards.forEach(card => {
+          card.classList.add('in');
+        });
       }, 450);
     }
 
@@ -670,7 +839,8 @@
       frontImg.alt = `Frente de ${card.title}`;
       backText.textContent = card.backText || '';
 
-      copyBtn.textContent = 'Copiar cuenta';
+      copyMxBtn.textContent = 'Copiar cuenta';
+      copyUsBtn.textContent = 'Copy Venmo';
 
       overlay.classList.add('open');
       overlay.setAttribute('aria-hidden', 'false');
@@ -692,7 +862,8 @@
       flipCard.classList.remove('flipped');
       document.body.style.overflow = '';
       currentCard = null;
-      copyBtn.textContent = 'Copiar cuenta';
+      copyMxBtn.textContent = 'Copiar cuenta';
+      copyUsBtn.textContent = 'Copy Venmo';
       bankBox.classList.remove('reveal');
     }
 
@@ -724,16 +895,29 @@
       }
     });
 
-    copyBtn.addEventListener('click', async (e) => {
+    copyMxBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
       try {
-        await navigator.clipboard.writeText(cuentaTexto.textContent);
-        copyBtn.textContent = 'Copiado ✓';
+        await navigator.clipboard.writeText(mxCuentaTexto.textContent);
+        copyMxBtn.textContent = 'Copiado ✓';
         setTimeout(() => {
-          copyBtn.textContent = 'Copiar cuenta';
+          copyMxBtn.textContent = 'Copiar cuenta';
         }, 1500);
       } catch {
-        alert('No se pudo copiar');
+        alert('No se pudo copiar la cuenta');
+      }
+    });
+
+    copyUsBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      try {
+        await navigator.clipboard.writeText(usCuentaTexto.textContent);
+        copyUsBtn.textContent = 'Copied ✓';
+        setTimeout(() => {
+          copyUsBtn.textContent = 'Copy Venmo';
+        }, 1500);
+      } catch {
+        alert('Could not copy Venmo');
       }
     });
 
