@@ -188,7 +188,8 @@
     }
 
 	.grid {
-	  width: min(92vw, 900px);
+    width: 100%;
+    max-width: 900px;
 	  margin: 0 auto;
 	  display: grid;
 	  grid-template-columns: repeat(3, 1fr);
@@ -545,8 +546,13 @@
     }
 
     @media (max-width: 680px) {
-      .page { 
-        padding: 12px; 
+      .page {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .grid {
+        width: 100%;
       }
 
       .header {
@@ -559,11 +565,6 @@
 
       .title-wrap p {
         font-size: 14px;
-      }
-
-      .grid {
-        width: min(96vw, 520px);
-        gap: 8px;
       }
 
       .thumb img {
