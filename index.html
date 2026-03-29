@@ -423,9 +423,24 @@
       });
     }
 
+    function resetAccessState() {
+      accessBox.style.display = 'none';
+      bankBox.style.display = 'none';
+      bankBox.classList.remove('reveal');
+
+      cardActionBtn.style.display = 'inline-flex';
+
+      accessInput.value = '';
+      accessMessage.textContent = '';
+      accessMessage.style.color = '';
+
+      copyBtn.textContent = "Copiar cuenta";
+    }
+
     function openCard(card) {
       currentCard = card;
       flipCard.classList.remove('flipped');
+      resetAccessState();
 
       frontImg.src = card.frontImage;
       frontImg.alt = `Frente de ${card.title}`;
@@ -452,6 +467,7 @@
       flipCard.classList.remove('flipped');
       document.body.style.overflow = '';
       currentCard = null;
+      resetAccessState();      
       cardActionBtn.style.display = 'none';
       accessBox.style.display = 'none';
       bankBox.style.display = 'none';
@@ -483,8 +499,6 @@
     document.addEventListener('keydown', (e) => {
       if (!overlay.classList.contains('open')) return;
 
-      const tag = document.activeElement.tagName;
-
       if (e.key === 'Escape') closeCard();
 
     });
@@ -504,16 +518,17 @@
       bankBox.style.display = 'none';
       accessMessage.textContent = '';
 
-      if (value === ACCESS_CODE) {
-        bankBox.style.display = 'block';
-        bankBox.classList.remove('reveal');
-        void bankBox.offsetWidth;
-        bankBox.classList.add('reveal');        
-      } else {
-        accessMessage.textContent = "Clave incorrecta";
-        accessMessage.style.color = "red";
-      }
-    });
+    if (value === ACCESS_CODE) {
+      accessMessage.textContent = '';
+      bankBox.style.display = 'block';
+      bankBox.classList.remove('reveal');
+      void bankBox.offsetWidth;
+      bankBox.classList.add('reveal');
+    } else {
+      bankBox.style.display = 'none';
+      accessMessage.textContent = "Clave incorrecta";
+      accessMessage.style.color = "red";
+    }
 
     copyBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
