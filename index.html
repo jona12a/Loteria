@@ -301,6 +301,38 @@
       50% { transform: translateX(4px); }
       75% { transform: translateX(-3px); }
       100% { transform: translateX(0); }
+    }
+
+    .access-input {
+      padding: 12px 14px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 2px solid #d2b48c;
+      background: #fffaf2;
+      outline: none;
+      transition: border 0.2s ease, box-shadow 0.2s ease;
+      text-align: center;
+    }
+
+    .access-input:focus {
+      border-color: #b14b32;
+      box-shadow: 0 0 0 2px rgba(177,75,50,0.2);
+    }
+
+    .access-btn {
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 2px solid #7a2e1f;
+      background: linear-gradient(180deg, #f7e7c6 0%, #ecd3a3 100%);
+      color: #7a2e1f;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .access-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
     }    
   </style>
 </head>
@@ -339,8 +371,8 @@
           </button>
 
           <div id="accessBox" style="display:none; flex-direction:column; gap:10px; margin-top:10px;">
-            <input id="accessInput" type="password" placeholder="Ingresa la clave" />
-            <button id="accessSubmit">Ver datos</button>
+            <input id="accessInput" class="access-input" type="password" placeholder="Ingresa la clave" />
+            <button id="accessSubmit" class="access-btn">Ver datos</button>
             <div id="accessMessage" style="font-size:14px;"></div>
           </div>
 
@@ -419,6 +451,7 @@
     const copyBtn = document.getElementById('copyBtn');
     const cuentaTexto = document.getElementById('cuentaTexto');
 
+    let errorTimeout = null;
     let currentCard = null;
 
     function renderGrid() {
@@ -547,9 +580,16 @@
         accessInput.value = '';
         accessInput.focus();
 
-        setTimeout(() => {
+        // limpiar timeout anterior
+        if (errorTimeout) {
+          clearTimeout(errorTimeout);
+        }
+
+        // nuevo timeout controlado
+        errorTimeout = setTimeout(() => {
           accessMessage.textContent = '';
-        }, 2000);
+          errorTimeout = null;
+        }, 3000);
       }
     });
 
