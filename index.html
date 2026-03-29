@@ -68,6 +68,7 @@
     .page {
       min-height: 100vh;
       padding: 24px;
+      opacity: 1;
     }
 
     .header {
@@ -384,11 +385,12 @@
     }
 
     .gate-footer-detail {
-      margin-top: 18px;
+      margin-top: 22px;
       color: #b14b32;
-      font-size: 16px;
-      letter-spacing: 0.18em;
-    }    
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      opacity: 0.9;
+    }  
 
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -442,31 +444,29 @@
     }
 
     .fade-in {
-      animation: fadeInPage 0.45s ease forwards;
+      animation: fadeInPage 0.4s ease forwards;
+      will-change: opacity;
     }
 
     @keyframes fadeInPage {
       from {
         opacity: 0;
-        transform: translateY(6px);
       }
       to {
         opacity: 1;
-        transform: translateY(0);
       }
-    }    
+    }
   </style>
 </head>
 <body>
   <section id="gateScreen" class="gate">
     <div class="gate-card gate-card-pretty">
       <div class="gate-inner">
-        <div class="gate-kicker">✦ boda + lotería + amor ✦</div>
         <h1 class="gate-title">La Boderia</h1>
-        <p class="gate-subtitle">
+ <!--   <p class="gate-subtitle">
           Una lluvia de cariño, juego y celebración.<br>
           Ingresa la clave para abrir la Boderia.
-        </p>
+        </p>  -->
 
         <div class="gate-form">
           <input
@@ -484,7 +484,7 @@
           <div id="gateMessage" class="gate-message"></div>
         </div>
 
-        <div class="gate-footer-detail">✦ ✦ ✦</div>
+        <div class="gate-kicker">✦ boda + lotería + amor ✦</div>
       </div>
     </div>
   </section>
