@@ -333,6 +333,12 @@
     .access-btn:hover {
       transform: translateY(-1px);
       box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+    }
+
+    .input-error {
+      border-color: #d94f2b !important;
+      box-shadow: 0 0 0 3px rgba(217, 79, 43, 0.25);
+      transition: box-shadow 0.2s ease, border 0.2s ease;
     }    
   </style>
 </head>
@@ -564,33 +570,47 @@
       accessMessage.textContent = '';
       accessMessage.style.color = '';
 
-      if (value === ACCESS_CODE) {
-        bankBox.style.display = 'block';
-        bankBox.classList.remove('reveal');
-        void bankBox.offsetWidth;
-        bankBox.classList.add('reveal');
-      } else {
-        accessMessage.textContent = "Clave incorrecta";
-        accessMessage.style.color = "red";
+    if (value === ACCESS_CODE) {
+      bankBox.style.display = 'block';
+      bankBox.classList.remove('reveal');
+      void bankBox.offsetWidth;
+      bankBox.classList.add('reveal');
+    } else {
+      bankBox.style.display = 'none';
 
-        accessInput.classList.remove('shake');
-        void accessInput.offsetWidth;
-        accessInput.classList.add('shake');
+      accessMessage.textContent = "Clave incorrecta";
+      accessMessage.style.color = "red";
 
-        accessInput.value = '';
-        accessInput.focus();
+      // 🔴 glow rojo
+      accessInput.classList.remove('input-error');
+      void accessInput.offsetWidth;
+      accessInput.classList.add('input-error');
 
-        // limpiar timeout anterior
-        if (errorTimeout) {
-          clearTimeout(errorTimeout);
-        }
+      // quitar glow después
+      setTimeout(() => {
+        accessInput.classList.remove('input-error');
+      }, 600);
 
-        // nuevo timeout controlado
-        errorTimeout = setTimeout(() => {
-          accessMessage.textContent = '';
-          errorTimeout = null;
-        }, 3000);
+      // shake
+      accessInput.classList.remove('shake');
+      void accessInput.offsetWidth;
+      accessInput.classList.add('shake');
+
+      // limpiar input
+      accessInput.value = '';
+      accessInput.focus();
+
+      // limpiar timeout anterior
+      if (errorTimeout) {
+        clearTimeout(errorTimeout);
       }
+
+      // nuevo timeout controlado
+      errorTimeout = setTimeout(() => {
+        accessMessage.textContent = '';
+        errorTimeout = null;
+      }, 3000);
+    }
     });
 
     copyBtn.addEventListener('click', async (e) => {
