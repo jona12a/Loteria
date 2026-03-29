@@ -200,8 +200,6 @@
       cursor: pointer;
       transition: transform .18s ease;
       aspect-ratio: 3 / 5;
-      overflow: hidden;
-      border-radius: var(--card-radius);
     }
 
     .thumb:hover,
@@ -214,8 +212,7 @@
       width: 100%;
       height: 100%;
       display: block;
-      object-fit: cover;
-      object-position: center;
+      object-fit: contain;
       border-radius: var(--card-radius);
       box-shadow: var(--shadow);
     }
